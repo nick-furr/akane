@@ -10,6 +10,33 @@ async function updateStatus(formData: FormData) {
   revalidatePath('/admin/reservations')
 }
 
+const STATUS_STYLE: Record<string, { color: string; borderColor: string }> = {
+  confirmed:  { color: 'var(--cream)',   borderColor: 'var(--line-strong)' },
+  pending:    { color: 'var(--red)',     borderColor: 'var(--red)'         },
+  cancelled:  { color: 'var(--fg-faint)', borderColor: 'var(--line)'      },
+  no_show:    { color: 'var(--fg-faint)', borderColor: 'var(--line)'      },
+}
+
+const TH_STYLE: React.CSSProperties = {
+  padding: '14px 16px',
+  fontFamily: 'var(--font-mono), monospace',
+  fontSize: 9,
+  letterSpacing: '0.28em',
+  textTransform: 'uppercase',
+  color: 'var(--fg-faint)',
+  textAlign: 'left',
+  fontWeight: 500,
+  whiteSpace: 'nowrap',
+  borderBottom: '1px solid var(--line-strong)',
+}
+
+const TD_STYLE: React.CSSProperties = {
+  padding: '16px',
+  fontSize: 13,
+  color: 'var(--fg-muted)',
+  verticalAlign: 'top',
+}
+
 export default async function ReservationsPage() {
   const supabase = await createClient()
   const { data: reservations } = await supabase
@@ -19,71 +46,115 @@ export default async function ReservationsPage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-xl font-semibold text-gray-900">Reservations</h1>
-      <div className="overflow-x-auto rounded-lg border border-gray-200">
-        <table className="min-w-full divide-y divide-gray-200 text-sm">
-          <thead className="bg-gray-50">
+      {/* Page header */}
+      <div style={{ marginBottom: 40 }}>
+        <div className="eyebrow" style={{ marginBottom: 16 }}>Reservations</div>
+        <h1 style={{
+          fontFamily: 'var(--font-serif), serif',
+          fontSize: 'clamp(36px, 4vw, 56px)',
+          fontWeight: 400,
+          color: 'var(--cream)',
+          margin: 0,
+          lineHeight: 1,
+        }}>
+          Guest <em style={{ fontStyle: 'italic', color: 'var(--red)' }}>Book</em>
+        </h1>
+      </div>
+
+      {/* Table */}
+      <div style={{
+        border: '1px solid var(--line)',
+        background: 'var(--bg-elev)',
+        overflowX: 'auto',
+      }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <thead style={{ background: 'var(--bg-panel)' }}>
             <tr>
-              <th className="px-4 py-3 text-left font-medium text-gray-500">Guest</th>
-              <th className="px-4 py-3 text-left font-medium text-gray-500">Email</th>
-              <th className="px-4 py-3 text-left font-medium text-gray-500">Date</th>
-              <th className="px-4 py-3 text-left font-medium text-gray-500">Time</th>
-              <th className="px-4 py-3 text-left font-medium text-gray-500">Party</th>
-              <th className="px-4 py-3 text-left font-medium text-gray-500">Status</th>
-              <th className="px-4 py-3 text-left font-medium text-gray-500">Special Requests</th>
-              <th className="px-4 py-3 text-left font-medium text-gray-500">Actions</th>
+              <th style={TH_STYLE}>Guest</th>
+              <th style={TH_STYLE}>Email</th>
+              <th style={TH_STYLE}>Date</th>
+              <th style={TH_STYLE}>Time</th>
+              <th style={TH_STYLE}>Party</th>
+              <th style={TH_STYLE}>Status</th>
+              <th style={TH_STYLE}>Notes</th>
+              <th style={TH_STYLE}>Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100 bg-white">
-            {reservations?.map((r) => (
-              <tr key={r.id} className="align-top">
-                <td className="px-4 py-3 text-gray-900">{r.guest_name}</td>
-                <td className="px-4 py-3 text-gray-600">{r.guest_email}</td>
-                <td className="px-4 py-3 text-gray-600">{r.reservation_date}</td>
-                <td className="px-4 py-3 text-gray-600">{r.reservation_time}</td>
-                <td className="px-4 py-3 text-gray-600">{r.party_size}</td>
-                <td className="px-4 py-3">
-                  <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
-                    r.status === 'confirmed' ? 'bg-green-100 text-green-700' :
-                    r.status === 'cancelled' ? 'bg-red-100 text-red-700' :
-                    r.status === 'no_show'   ? 'bg-gray-100 text-gray-600' :
-                                               'bg-yellow-100 text-yellow-700'
-                  }`}>
-                    {r.status}
-                  </span>
-                </td>
-                <td className="px-4 py-3 text-gray-600">{r.special_requests ?? '—'}</td>
-                <td className="px-4 py-3">
-                  <div className="flex gap-2">
-                    <form action={updateStatus}>
-                      <input type="hidden" name="id" value={r.id} />
-                      <input type="hidden" name="status" value="confirmed" />
-                      <button
-                        type="submit"
-                        className="rounded bg-green-600 px-2 py-1 text-xs font-medium text-white hover:bg-green-700 disabled:opacity-40"
-                        disabled={r.status === 'confirmed'}
-                      >
-                        Confirm
-                      </button>
-                    </form>
-                    <form action={updateStatus}>
-                      <input type="hidden" name="id" value={r.id} />
-                      <input type="hidden" name="status" value="cancelled" />
-                      <button
-                        type="submit"
-                        className="rounded bg-red-600 px-2 py-1 text-xs font-medium text-white hover:bg-red-700 disabled:opacity-40"
-                        disabled={r.status === 'cancelled'}
-                      >
-                        Cancel
-                      </button>
-                    </form>
-                  </div>
-                </td>
-              </tr>
-            ))}
+          <tbody>
+            {reservations?.map((r) => {
+              const badge = STATUS_STYLE[r.status] ?? STATUS_STYLE.pending
+              return (
+                <tr key={r.id} className="admin-table-row" style={{ borderTop: '1px solid var(--line)' }}>
+                  <td style={{ ...TD_STYLE, color: 'var(--cream)', fontFamily: 'var(--font-serif), serif', fontSize: 15 }}>
+                    {r.guest_name}
+                  </td>
+                  <td style={TD_STYLE}>{r.guest_email}</td>
+                  <td style={{ ...TD_STYLE, fontFamily: 'var(--font-mono), monospace', fontSize: 12, letterSpacing: '0.06em' }}>
+                    {r.reservation_date}
+                  </td>
+                  <td style={{ ...TD_STYLE, fontFamily: 'var(--font-mono), monospace', fontSize: 12, letterSpacing: '0.06em' }}>
+                    {r.reservation_time}
+                  </td>
+                  <td style={{ ...TD_STYLE, textAlign: 'center' }}>{r.party_size}</td>
+                  <td style={TD_STYLE}>
+                    <span style={{
+                      display: 'inline-block',
+                      fontSize: 9,
+                      letterSpacing: '0.2em',
+                      textTransform: 'uppercase',
+                      padding: '4px 10px',
+                      border: `1px solid ${badge.borderColor}`,
+                      color: badge.color,
+                      fontFamily: 'var(--font-mono), monospace',
+                    }}>
+                      {r.status}
+                    </span>
+                  </td>
+                  <td style={{ ...TD_STYLE, maxWidth: 200 }}>{r.special_requests ?? '—'}</td>
+                  <td style={TD_STYLE}>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <form action={updateStatus}>
+                        <input type="hidden" name="id" value={r.id} />
+                        <input type="hidden" name="status" value="confirmed" />
+                        <button
+                          type="submit"
+                          className="admin-btn-confirm"
+                          disabled={r.status === 'confirmed'}
+                        >
+                          Confirm
+                        </button>
+                      </form>
+                      <form action={updateStatus}>
+                        <input type="hidden" name="id" value={r.id} />
+                        <input type="hidden" name="status" value="cancelled" />
+                        <button
+                          type="submit"
+                          className="admin-btn-cancel"
+                          disabled={r.status === 'cancelled'}
+                        >
+                          Cancel
+                        </button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              )
+            })}
             {(!reservations || reservations.length === 0) && (
               <tr>
-                <td colSpan={8} className="px-4 py-8 text-center text-gray-400">
+                <td
+                  colSpan={8}
+                  style={{
+                    ...TD_STYLE,
+                    textAlign: 'center',
+                    padding: '60px 16px',
+                    color: 'var(--fg-faint)',
+                    fontFamily: 'var(--font-serif), serif',
+                    fontStyle: 'italic',
+                    fontSize: 18,
+                    borderTop: '1px solid var(--line)',
+                  }}
+                >
                   No reservations yet.
                 </td>
               </tr>
@@ -91,6 +162,20 @@ export default async function ReservationsPage() {
           </tbody>
         </table>
       </div>
+
+      {/* Count */}
+      {reservations && reservations.length > 0 && (
+        <p style={{
+          marginTop: 16,
+          fontSize: 10,
+          letterSpacing: '0.28em',
+          textTransform: 'uppercase',
+          color: 'var(--fg-faint)',
+          fontFamily: 'var(--font-mono), monospace',
+        }}>
+          {reservations.length} reservation{reservations.length !== 1 ? 's' : ''}
+        </p>
+      )}
     </div>
   )
 }

@@ -1104,3 +1104,50 @@ input, textarea, select { font-family: inherit; color: inherit; }
   .party-grid { grid-template-columns: repeat(4, 1fr); }
   .time-grid { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* ── Admin ── */
+.admin-sidebar-link {
+  display: block;
+  padding: 10px 12px;
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  border-left: 2px solid transparent;
+  transition: color 0.2s, background 0.2s, border-color 0.2s;
+}
+.admin-sidebar-link:hover {
+  color: var(--cream);
+  background: rgba(242, 236, 226, 0.04);
+  border-left-color: var(--line-strong);
+}
+.admin-table-row { transition: background 0.15s; }
+.admin-table-row:hover { background: rgba(242, 236, 226, 0.025); }
+.admin-btn-confirm {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 7px 14px;
+  background: var(--red);
+  color: var(--cream);
+  border: 1px solid var(--red);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+.admin-btn-confirm:hover:not(:disabled) { background: transparent; color: var(--red); }
+.admin-btn-confirm:disabled { opacity: 0.25; cursor: default; }
+.admin-btn-cancel {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 7px 14px;
+  background: transparent;
+  color: var(--fg-muted);
+  border: 1px solid var(--line-strong);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+.admin-btn-cancel:hover:not(:disabled) { color: var(--cream); border-color: var(--cream); }
+.admin-btn-cancel:disabled { opacity: 0.25; cursor: default; }
