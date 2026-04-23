@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import MenuClient from './MenuClient'
 
 type MenuItem = {
   id: string
@@ -8,13 +9,14 @@ type MenuItem = {
   category: string
 }
 
-const CATEGORY_ORDER = ['appetizer', 'main', 'dessert', 'drink'] as const
-
-const CATEGORY_LABELS: Record<string, string> = {
-  appetizer: 'Appetizers',
-  main: 'Mains',
-  dessert: 'Desserts',
-  drink: 'Drinks',
+const CATEGORY_CONFIG: Record<
+  string,
+  { label: string; jp: string; tagline: string; order: number }
+> = {
+  appetizer: { label: 'Small Plates', jp: '小皿', tagline: 'For the start. For sharing.', order: 0 },
+  main: { label: 'Main Courses', jp: '主菜', tagline: 'The heart of the menu.', order: 1 },
+  dessert: { label: 'Desserts', jp: '甘味', tagline: 'The quiet end.', order: 2 },
+  drink: { label: 'Sake & Drinks', jp: '酒', tagline: '120-label program. Pairings by the glass.', order: 3 },
 }
 
 export default async function MenuPage() {
@@ -26,66 +28,60 @@ export default async function MenuPage() {
     .order('category')
     .order('display_order')
 
-  const grouped = CATEGORY_ORDER.reduce<Record<string, MenuItem[]>>((acc, cat) => {
-    acc[cat] = (items ?? []).filter((item) => item.category === cat)
-    return acc
-  }, {})
+  const allItems: MenuItem[] = items ?? []
 
-  const hasItems = items && items.length > 0
+  const categoryKeys = Object.keys(CATEGORY_CONFIG).sort(
+    (a, b) => CATEGORY_CONFIG[a].order - CATEGORY_CONFIG[b].order
+  )
+
+  const categories = categoryKeys
+    .map((key) => ({
+      key,
+      ...CATEGORY_CONFIG[key],
+      items: allItems.filter((item) => item.category === key),
+    }))
+    .filter((cat) => cat.items.length > 0)
 
   return (
-    <main className="pt-20">
-      {/* Header */}
-      <section className="border-b border-white/10 py-28 text-center">
-        <p className="mb-5 text-xs tracking-[0.35em] uppercase text-[#c9a96e]">Our Offerings</p>
-        <h1 className="font-serif text-5xl font-normal text-[#f5f0e8] md:text-7xl">The Menu</h1>
+    <main>
+      <section className="menu-hero">
+        <div className="container">
+          <div className="eyebrow">Evening Menu · Spring 2026</div>
+          <h1 className="menu-hero-title">
+            The <em>Menu.</em>
+          </h1>
+          <div
+            style={{
+              marginTop: 20,
+              maxWidth: 560,
+              color: 'var(--fg-muted)',
+              fontSize: 15,
+              lineHeight: 1.8,
+            }}
+          >
+            What follows is the à la carte room. The counter is a different affair — eighteen
+            courses, chosen by Chef Kenji the morning of your seating.
+          </div>
+        </div>
+        <div className="menu-hero-jp">品書き</div>
       </section>
 
-      {/* Menu sections */}
-      <div className="mx-auto max-w-5xl px-6 py-24">
-        {hasItems ? (
-          CATEGORY_ORDER.map((cat) => {
-            const catItems = grouped[cat]
-            if (!catItems || catItems.length === 0) return null
-
-            return (
-              <section key={cat} className="mb-24 last:mb-0">
-                {/* Category heading */}
-                <div className="mb-10 flex items-center gap-8">
-                  <h2 className="font-serif text-2xl font-normal text-[#f5f0e8]">
-                    {CATEGORY_LABELS[cat]}
-                  </h2>
-                  <div className="h-px flex-1 bg-white/10" />
-                </div>
-
-                {/* Items grid */}
-                <div className="grid md:grid-cols-2">
-                  {catItems.map((item) => (
-                    <div
-                      key={item.id}
-                      className="bg-[#0a0a0a] p-8 border-b border-white/10 last:border-b-0 md:[&:nth-last-child(2)]:border-b-0 md:even:border-l"
-                    >
-                      <div className="mb-3 flex items-baseline justify-between gap-4">
-                        <h3 className="font-serif text-lg font-normal text-[#f5f0e8]">{item.name}</h3>
-                        <span className="shrink-0 text-sm text-[#c9a96e]">
-                          ${Number(item.price).toFixed(2)}
-                        </span>
-                      </div>
-                      {item.description && (
-                        <p className="text-sm leading-relaxed text-[#f5f0e8]/50">{item.description}</p>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )
-          })
-        ) : (
-          <p className="py-24 text-center text-sm text-[#f5f0e8]/30 tracking-widest uppercase">
+      {categories.length > 0 ? (
+        <MenuClient categories={categories} />
+      ) : (
+        <div style={{ padding: '120px 40px', textAlign: 'center' }}>
+          <p
+            style={{
+              fontSize: 11,
+              letterSpacing: '0.3em',
+              textTransform: 'uppercase',
+              color: 'var(--fg-faint)',
+            }}
+          >
             Menu coming soon
           </p>
-        )}
-      </div>
+        </div>
+      )}
     </main>
   )
 }
