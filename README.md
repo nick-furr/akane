@@ -1,4 +1,4 @@
-# The Grand Table — Restaurant Concept
+# AKANE 茜 — Sushi, Tribeca
 
 A full-stack restaurant website with real reservations, email confirmations, and a protected admin dashboard.
 
@@ -8,7 +8,9 @@ A full-stack restaurant website with real reservations, email confirmations, and
 
 ## About
 
-This is a concept project built by [Nick Furr](https://nickfurr.com) as a portfolio piece. It demonstrates a production-style restaurant website — not a template or tutorial. Every feature listed below is fully implemented: the booking form writes to a real database, the confirmation email actually sends, and the admin dashboard is protected behind real authentication.
+AKANE is a concept project built by [Nick Furr](https://nickfurr.com) as a portfolio piece — the website for a fictional counter-first sushi restaurant in Tribeca. It demonstrates a production-style restaurant site, not a template or tutorial. Every feature listed below is fully implemented: the booking form writes to a real database, the confirmation email actually sends, and the admin dashboard is protected behind real authentication.
+
+The brand and visual identity are deliberately specific — a dark, crimson-accented Japanese aesthetic ("akane" is the red of the sky the moment it burns) — to show the codebase carrying a real design system rather than placeholder styling.
 
 ---
 
@@ -18,7 +20,8 @@ This is a concept project built by [Nick Furr](https://nickfurr.com) as a portfo
 - **Email confirmations** — a transactional confirmation email is sent to guests immediately after booking via Resend, including a unique booking reference
 - **Admin dashboard** — password-protected area where restaurant staff can view reservations and update their status (confirm or cancel)
 - **Public menu** — full menu fetched live from the database, grouped by category (appetizers, mains, desserts, drinks)
-- **Multi-page public site** — homepage with menu preview, about page, contact page, and booking page; dark fine-dining aesthetic throughout
+- **Multi-page public site** — homepage with menu preview, about page, contact page, and booking page, plus a custom 404 and a generated OpenGraph share image
+- **AKANE design system** — a cohesive dark + crimson Japanese aesthetic defined in `globals.css`, layered serif (Cormorant Garamond / Shippori Mincho), sans (Inter), and mono (JetBrains Mono) typography
 - **Two-layer auth** — proxy-level redirect guard plus server component session check on every admin route
 
 ---
@@ -61,7 +64,7 @@ RESEND_FROM_EMAIL=
 
 # Restaurant config
 NEXT_PUBLIC_RESTAURANT_ID=   # UUID of the row in the restaurants table
-RESTAURANT_NAME=             # e.g. "The Grand Table"
+RESTAURANT_NAME=             # e.g. "AKANE"
 NEXT_PUBLIC_APP_URL=         # e.g. http://localhost:3000
 ```
 
