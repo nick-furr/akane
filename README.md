@@ -12,7 +12,7 @@ AKANE is the website for a counter-first sushi restaurant in Tribeca — a produ
 
 The brand is deliberately specific: a dark, crimson-accented Japanese aesthetic ("akane" is the red of the sky the moment it burns), carried through a real design system rather than placeholder styling.
 
-Built by [Nick Furr](https://nickfurr.com) as a portfolio piece.
+Built by [Nick Furr](https://nickfurr.com).
 
 ---
 
