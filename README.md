@@ -8,9 +8,11 @@ A full-stack restaurant website with real reservations, email confirmations, and
 
 ## About
 
-AKANE is a concept project built by [Nick Furr](https://nickfurr.com) as a portfolio piece — the website for a fictional counter-first sushi restaurant in Tribeca. It demonstrates a production-style restaurant site, not a template or tutorial. Every feature listed below is fully implemented: the booking form writes to a real database, the confirmation email actually sends, and the admin dashboard is protected behind real authentication.
+AKANE is the website for a counter-first sushi restaurant in Tribeca — a production-style build, not a template or tutorial. The booking form writes to a real PostgreSQL database, confirmation emails send through Resend, and the admin area sits behind real authentication.
 
-The brand and visual identity are deliberately specific — a dark, crimson-accented Japanese aesthetic ("akane" is the red of the sky the moment it burns) — to show the codebase carrying a real design system rather than placeholder styling.
+The brand is deliberately specific: a dark, crimson-accented Japanese aesthetic ("akane" is the red of the sky the moment it burns), carried through a real design system rather than placeholder styling.
+
+Built by [Nick Furr](https://nickfurr.com) as a portfolio piece.
 
 ---
 
@@ -18,7 +20,7 @@ The brand and visual identity are deliberately specific — a dark, crimson-acce
 
 - **Online reservations** — guests submit booking requests through a public form; data is validated server-side and written to a PostgreSQL database
 - **Email confirmations** — a transactional confirmation email is sent to guests immediately after booking via Resend, including a unique booking reference
-- **Admin dashboard** — password-protected area where restaurant staff can view reservations and update their status (confirm or cancel)
+- **Admin reservations** — password-protected area where staff view reservations and confirm or cancel them
 - **Public menu** — full menu fetched live from the database, grouped by category (appetizers, mains, desserts, drinks)
 - **Multi-page public site** — homepage with menu preview, about page, contact page, and booking page, plus a custom 404 and a generated OpenGraph share image
 - **AKANE design system** — a cohesive dark + crimson Japanese aesthetic defined in `globals.css`, layered serif (Cormorant Garamond / Shippori Mincho), sans (Inter), and mono (JetBrains Mono) typography
